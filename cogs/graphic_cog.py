@@ -24,7 +24,7 @@ class GraphicCog(commands.Cog):
         """
         self.bot = bot
 
-    @commands.hybrid_command(
+    '''@commands.hybrid_command(
         name='image',
         description='Generiert ein Bild mit DALL·E 3 (Standard, 1024×1024).'
     )
@@ -65,7 +65,7 @@ class GraphicCog(commands.Cog):
         embed.set_image(url=f'attachment://{filename}')
         embed.set_footer(text=f'Generiertes Bild mit folgendem Prompt: {prompt}')
 
-        await ctx.send(file=file, embed=embed)
+        await ctx.send(file=file, embed=embed)'''
 
     @commands.hybrid_command(name='sw', description='Konvertiert Medien in Schwarz-Weiß')
     async def sw(self, ctx: commands.Context, input_file: discord.Attachment):
