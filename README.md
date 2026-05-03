@@ -80,10 +80,6 @@ SPOTIFY_CLIENT_SECRET=
 poetry run python main.py
 ```
 
-### Adding the bot to your server
-
-[Invite link](https://discord.com/oauth2/authorize?client_id=1357422287451590716&permissions=8&integration_type=0&scope=applications.commands+bot) · [Join the test server](https://discord.gg/4WHc38DAbs)
-
 ## Project Structure
 
 ```
