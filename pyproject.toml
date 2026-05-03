@@ -1,9 +1,9 @@
 [project]
-name = "abschlussprojekt"
+name = "discord-bot"
 version = "0.1.0"
-description = "DiscordBot"
+description = "Feature-rich Discord bot with audio DSP, computer vision, AI chat, and music streaming"
 authors = [
-    {name = "Your Name",email = "you@example.com"}
+    {name = "Heinrich Teich",email = "heinrichteich@outlook.com"}
 ]
 readme = "README.md"
 requires-python = ">=3.10"

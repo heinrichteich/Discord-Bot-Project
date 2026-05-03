@@ -12,30 +12,17 @@ client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 graphic_utils = GraphicUtils()
 
 class GraphicCog(commands.Cog):
-    """
-    Cog für Bildbearbeitung und Bild-Generierung.
-    """
-    def __init__(self, bot: commands.Bot):
-        """
-        Initialisiert GraphicCog.
+    """Image and video processing commands."""
 
-        :param bot: Bot-Instanz.
-        :return: None
-        """
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     '''@commands.hybrid_command(
         name='image',
-        description='Generiert ein Bild mit DALL·E 3 (Standard, 1024×1024).'
+        description='Generiert ein Bild mit DALL·E 3 (Standard, 1024×1024).'
     )
     async def image(self, ctx: commands.Context, prompt: str):
-        """
-        Generiert ein Bild via DALL·E 3, sendet es als Embed mit Dateianhang
-        """
-        # Ack für Slash-Command bzw. Typing-Indikator
         await ctx.defer()
-
-        # Bild generieren
         try:
             resp = client.images.generate(
                 model='dall-e-3',
@@ -46,41 +33,29 @@ class GraphicCog(commands.Cog):
             )
             image_url = resp.data[0].url
         except Exception as e:
-            return await ctx.send(f'Fehler beim Abrufen des Bildes: {e}')
-
-        # Bild herunterladen
+            return await ctx.send(f'Error generating image: {e}')
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.get(image_url) as r:
                     if r.status != 200:
-                        return await ctx.send(f'Fehler beim Herunterladen des Bildes: HTTP {r.status}')
+                        return await ctx.send(f'Error downloading image: HTTP {r.status}')
                     img_data = await r.read()
         except Exception as e:
-            return await ctx.send(f'Fehler beim Herunterladen des Bildes: {e}')
-
-        # Datei und Embed vorbereiten
+            return await ctx.send(f'Error downloading image: {e}')
         filename = 'generated_image.png'
         file = discord.File(io.BytesIO(img_data), filename=filename)
         embed = discord.Embed()
         embed.set_image(url=f'attachment://{filename}')
-        embed.set_footer(text=f'Generiertes Bild mit folgendem Prompt: {prompt}')
-
+        embed.set_footer(text=f'Generated with prompt: {prompt}')
         await ctx.send(file=file, embed=embed)'''
 
     @commands.hybrid_command(name='sw', description='Konvertiert Medien in Schwarz-Weiß')
     async def sw(self, ctx: commands.Context, input_file: discord.Attachment):
-        """
-        Konvertiert Bild oder Video in Graustufen.
-
-        :param ctx: Command-Kontext.
-        :param input_file: Eingabedatei als Attachment.
-        :return: None
-        """
         await ctx.defer()
         try:
             data = await input_file.read()
         except Exception as e:
-            return await ctx.send(f'Fehler beim Herunterladen: {e}')
+            return await ctx.send(f'Error downloading file: {e}')
         name = input_file.filename.lower()
         if name.endswith(('.png', '.jpg', '.bmp', '.jpeg')):
             result = graphic_utils.convert_to_grayscale_image(data)
@@ -89,7 +64,7 @@ class GraphicCog(commands.Cog):
             result = graphic_utils.convert_to_grayscale_video(data)
             out_name = 'sw_result.mp4'
         else:
-            return await ctx.send('Ungültiges Dateiformat.')
+            return await ctx.send('Invalid file format.')
         buf = io.BytesIO(result)
         buf.seek(0)
         await ctx.send(file=discord.File(buf, filename=out_name))
@@ -98,24 +73,12 @@ class GraphicCog(commands.Cog):
     async def watermark(self, ctx: commands.Context, input_file: discord.Attachment, watermark_file: discord.Attachment,
                         position: Literal['top-left','top-right','bottom-left','bottom-right','center']='center',
                         scale: str='1.0', transparency: str='1.0'):
-        """
-        Fügt Wasserzeichen zu Bild/Video hinzu.
-
-        :param ctx: Command-Kontext.
-        :param input_file: Originaldatei.
-        :param watermark_file: Wasserzeichen-Datei.
-        :param position: Position des Wasserzeichens.
-        :param scale: Skalierung als String.
-        :param transparency: Transparenz als String.
-        :return: None
-        """
         await ctx.defer()
         try:
             data_in = await input_file.read()
             data_wm = await watermark_file.read()
         except Exception as e:
-            return await ctx.send(f'Fehler beim Herunterladen: {e}')
-        # Parameter parsen
+            return await ctx.send(f'Error downloading files: {e}')
         def parse_decimal(val: str) -> float:
             try:
                 return float(val)
@@ -125,7 +88,7 @@ class GraphicCog(commands.Cog):
             sc = parse_decimal(scale)
             tr = parse_decimal(transparency)
         except Exception:
-            return await ctx.send('Ungültige Zahlenformate')
+            return await ctx.send('Invalid number format.')
         name = input_file.filename.lower()
         if name.endswith(('.png', '.jpg', '.bmp', '.jpeg')):
             out = graphic_utils.watermark_image_file(data_in, data_wm, position, sc, tr)
@@ -134,18 +97,10 @@ class GraphicCog(commands.Cog):
             out = graphic_utils.watermark_video_file(data_in, data_wm, position, sc, tr)
             out_name = 'watermark_result.mp4'
         else:
-            return await ctx.send('Ungültiges Dateiformat.')
+            return await ctx.send('Invalid file format.')
         buf2 = io.BytesIO(out)
         buf2.seek(0)
         await ctx.send(file=discord.File(buf2, filename=out_name))
 
 async def setup(bot: commands.Bot):
-    """
-    Registriert GraphicCog.
-
-    :param bot: Bot-Instanz.
-    :return: None
-    """
     await bot.add_cog(GraphicCog(bot))
-
-

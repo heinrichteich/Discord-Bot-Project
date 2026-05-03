@@ -1,95 +1,115 @@
-# Abschlussprojekt
+# Discord Bot
 
-## Beschreibung
-Unser Discord‑Bot ist ein Python‑Tool, welches es Benutzern ermöglicht, mit Slash‑Commands Audio‑Effekte wie Verlangsamung, Reverb und Stereo/Mono‑Konvertierung anzuwenden, Bilder und Videos in Graustufen oder mit Wasserzeichen zu bearbeiten sowie KI‑generierte Bilder zu erstellen und GPT‑basierte Bildprüfungen durchzuführen. Zusätzlich bietet der Bot Musiksteuerung (Play, Queue, Skip, Pause, Resume, Stop), automatische Geburtstagsverwaltung mit Geburtstagsgrüßen und GPT‑Chat‑Modi inklusive Imitations‑ und Markus‑Rühl‑Stil. 
-## Installation
-Dieses Projekt verwendet [poetry](https://python-poetry.org/) für das Paketmanagement.
+A feature-rich Discord bot built with Python and discord.py, integrating audio DSP, computer vision, AI-powered chat, music streaming, and more — all accessible through Discord slash commands.
 
-1. Dependencies installieren:
-   ```bash
-   poetry install --no-root
-   ```
-2. Anwendung starten:
-   ```bash
-   poetry run python main.py
-   ```
-3. Neue Dependencies hinzufügen:
-   ```bash
-   poetry add <library>
-   ```
-4. Bot zum eigenen Server hinzufügen:
-   [Link](https://discord.com/oauth2/authorize?client_id=1357422287451590716&permissions=8&integration_type=0&scope=applications.commands+bot)
+## Features
 
-   Oder alternativ: Dem [Test-Discord](https://discord.gg/4WHc38DAbs) beitreten
-   
+### 🟦 Chat & AI
+- **GPT-powered chat** — mention the bot to start a conversation powered by GPT-4o-mini, with per-channel message history
+- **Imitation mode** (`/ape`, `/noape`) — the bot mimics a specified user's messages with GPT-based text transformation, optionally with TTS
+- **Markus Rühl mode** (`/maggus`, `/nomaggus`) — responses in a distinct persona style
+- **Birthday intents** — ask the bot natural-language questions about upcoming birthdays (e.g. *"Who has a birthday next?"*)
 
-## Discord-Bot Befehle
-Mit dem Befehl `/help` erhältst du eine Übersicht aller verfügbaren Befehle:
+### 🟨 Audio Effects
+- **/slowed** — time-stretch audio without pitch shift (PSOLA)
+- **/slowed_reverb** — slowed + convolution reverb via impulse response
+- **/reverb** — convolution reverb only
+- **/stereo** — mono → stereo widening using the Haas effect
+- **/mono** — stereo → mono mixdown
 
-### ⬜ [Umbra's Sync Command](https://about.abstractumbra.dev/discord.py/2023/01/29/sync-command-example.html)
-- **/sync** `<guilds>` ["~"|"*"|"^"] – Synchronisiert die Slash-Befehle global oder für spezifische Server
+### 🟧 Graphics
+- **/sw** — convert image or video to grayscale (OpenCV + FFmpeg)
+- **/watermark** — overlay a watermark image on photos or videos with configurable position, scale, and transparency
+- **/image** — generate an image with DALL·E 3 *(currently disabled)*
 
-### 🟦 Chat-Modus
-- **/ape** `<username>` [laut] – Imitationsmodus aktivieren
-- **/noape** `<username>` – Imitationsmodus deaktivieren
-- **/maggus** – Markus‑Rühl‑Stil aktivieren
-- **/nomaggus** – Markus‑Rühl‑Stil deaktivieren
-- **@mention** `<Nachricht>` – GPT-Chat und Geburtstags‑Intents
+### 🟥 Image Analysis
+- **/check** — analyse an image with GPT-4o vision and a custom prompt; result is stored in channel memory so you can follow up by mentioning the bot
 
-### 🟨 Audio-Effekte
-- **/slowed** `<input_audio>` [slow_factor] – Audio verlangsamen
-- **/slowed_reverb** `<input_audio>` `<impulse_audio>` [slow_factor] – Reverb + Slowed
-- **/reverb** `<input_audio>` `<impulse_audio>` – Nur Reverb
-- **/stereo** `<input_audio>` – Mono → Stereo (Haas-Effekt)
-- **/mono** `<input_audio>` – Stereo → Mono
+### 🟩 Birthday Management
+- **/setbirthday**, **/editbirthday**, **/viewbirthday**, **/viewbirthdays**, **/deletebirthday** — per-guild birthday registry backed by a JSON file
+- Automatic midnight greeting sent to the guild's system channel on each member's birthday
 
-### 🟧 Grafik
-- **/watermark** `<input_file>` `<watermark_file>` [position] [scale] [transparency] – Wasserzeichen hinzufügen
-- **/sw** `<input_file>` – Bild/Video in Schwarz‑Weiß konvertieren
-- **/image** `<prompt>` – Generiert ein Bild mit DALL·E 3
+### 🟪 Music
+- **/play** — stream audio from YouTube or Spotify links via yt-dlp
+- **/queue** — display the current queue and now-playing track
+- **/skip** — skip one or more tracks
+- **/clear_queue**, **/pause**, **/resume**, **/stop** — full playback control
 
-### 🟥 Bildprüfung
-- **/check** `<Bilddatei>` `<prompt>` – Bild mit GPT prüfen
+## Tech Stack
 
-### 🟩 Geburtstag
-- **/setbirthday** `<username>` `<TT.MM.JJJJ>` [Name] – Geburtstag setzen
-- **/viewbirthdays** – Alle Geburtstage anzeigen
-- **/viewbirthday** `<username>` – Geburtstag eines Users anzeigen
-- **/editbirthday** `<username>` `<TT.MM.JJJJ>` [Neuer_Name] – Geburtstag bearbeiten
-- **/deletebirthday** `<username>` – Geburtstag löschen
+| Layer | Libraries |
+|---|---|
+| Bot framework | discord.py 2.5+ |
+| Audio DSP | scipy, librosa, soundfile, psola |
+| Computer vision | OpenCV, Pillow, FFmpeg |
+| AI / LLM | OpenAI SDK (GPT-4o-mini, DALL·E 3) |
+| Music streaming | yt-dlp, spotipy, ffmpeg-python, PyNaCl |
+| OCR | pytesseract, pylatexenc |
+| HTTP | aiohttp |
+| Package manager | Poetry |
 
-### 🟪 Musiksteuerung
-- **/play** `<Link>` – Song abspielen
-- **/queue** – Warteschlange anzeigen
-- **/skip** [Anzahl] – Song(s) überspringen
-- **/clear_queue** – Warteschlange leeren
-- **/pause** – Wiedergabe pausieren
-- **/resume** – Wiedergabe fortsetzen
-- **/stop** – Wiedergabe stoppen
+## Getting Started
 
+### Prerequisites
+- Python 3.10+
+- [Poetry](https://python-poetry.org/)
+- FFmpeg on `PATH`
+- Tesseract OCR on `PATH`
 
+### Installation
 
-## Ordnerstruktur
+```bash
+# 1. Install dependencies
+poetry install --no-root
 
-```
-cogs/            # Cogs: Discord-Bot-Befehle
-utils/           # Hilfsfunktionen der Befehle
-main.py          # Hauptprogramm
-birthdays.json   # Geburtstagsdatenbank
-README.md        # Dokumentation
-pyproject.toml   # Poetry-Projektkonfiguration
-poetry.lock      # Sperrdatei für Poetry
-.env             # Umgebungsvariablen
-.gitignore       # Ausschlussliste für Git
+# 2. Copy the example env file and fill in your credentials
+cp .env.example .env
 ```
 
-## Team: Gruppe 7
-- Jonas Kriehn
-- Max Falk Pitulle
-- Jakob Simon Haut
-- Heinrich Teich
-- Lea Katharina von Leesen
+**.env** variables required:
 
-## Issues
+```
+BOT_TOKEN=
+OPENAI_API_KEY=
+SPOTIFY_CLIENT_ID=
+SPOTIFY_CLIENT_SECRET=
+```
 
-- Derzeit kann keine Musik vom Server abgespielt werden, da dieser von yt-dlp als Bot erkannt und daher blockiert wird. Wir sind bemüht an einem zeitnahmen Fix.
+```bash
+# 3. Run the bot
+poetry run python main.py
+```
+
+### Adding the bot to your server
+
+[Invite link](https://discord.com/oauth2/authorize?client_id=1357422287451590716&permissions=8&integration_type=0&scope=applications.commands+bot) · [Join the test server](https://discord.gg/4WHc38DAbs)
+
+## Project Structure
+
+```
+cogs/            # discord.py Cogs (one per feature domain)
+utils/           # Business logic used by Cogs
+main.py          # Entry point — loads cogs and starts the bot
+birthdays.json   # Persistent birthday store
+pyproject.toml   # Poetry project config
+.env             # Secrets (not committed)
+```
+
+## Slash Command Sync
+
+The bot uses [Umbra's sync command](https://about.abstractumbra.dev/discord.py/2023/01/29/sync-command-example.html):
+
+```
+/sync ~   — sync to current guild
+/sync *   — copy globals to current guild
+/sync ^   — clear guild commands
+/sync     — global sync
+```
+
+## Known Issues
+
+- Music playback from some sources may be blocked — yt-dlp is occasionally detected as a bot by certain platforms. A fix is being investigated.
+
+## Author
+
+Heinrich Teich

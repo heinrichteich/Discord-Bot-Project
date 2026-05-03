@@ -2,23 +2,10 @@ import discord
 from discord.ext import commands
 
 class HelpCog(commands.Cog):
-    """
-    Cog für den /help-Befehl, zeigt eine Übersicht aller verfügbaren Befehle an.
-
-    :param bot: Die Bot-Instanz, zu der der Cog gehört.
-    :type bot: commands.Bot
-    :return: None
-    """
+    """Provides the /help command with an overview of all available bot commands."""
 
     @commands.hybrid_command(name="help", description="Zeigt eine Übersicht aller Befehle an.")
     async def help(self, ctx: commands.Context):
-        """
-        Zeigt eine Übersicht aller Befehle an.
-
-        :param ctx: Der Kontext, in dem der Befehl aufgerufen wurde.
-        :type ctx: commands.Context
-        :return: None
-        """
         embed = discord.Embed(
             title="**Hilfe Übersicht**",
             color=discord.Color.blue(),
@@ -91,12 +78,5 @@ class HelpCog(commands.Cog):
         await ctx.send(embed=embed, ephemeral=True)
 
 async def setup(bot: commands.Bot):
-    """
-    Lädt den HelpCog in die Bot-Instanz.
-
-    :param bot: Die Bot-Instanz, zu der der Cog hinzugefügt wird.
-    :type bot: commands.Bot
-    :return: None
-    """
     bot.remove_command("help")
     await bot.add_cog(HelpCog(bot))

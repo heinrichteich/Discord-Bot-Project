@@ -26,10 +26,10 @@ initial_extensions = [
 async def load_extensions():
     for ext in initial_extensions:
         try:
-            await bot.load_extension(ext)  # Asynchrones Laden der Cogs
-            print(f"✅ Cog {ext} geladen.")
+            await bot.load_extension(ext)
+            print(f"✅ Loaded {ext}")
         except Exception as e:
-            print(f"❌ Fehler beim Laden von {ext}: {str(e)}")
+            print(f"❌ Failed to load {ext}: {str(e)}")
 
 @bot.command()
 @commands.guild_only()
@@ -67,8 +67,8 @@ async def sync(ctx: commands.Context, guilds: commands.Greedy[discord.Object], s
 
 @bot.event
 async def on_ready():
-    await bot.tree.sync()  # Synchronisiere Slash-Commands
-    print(f"🟢 Bot ist online als {bot.user}!")
+    await bot.tree.sync()
+    print(f"🟢 Bot online as {bot.user}")
 
 async def main():
     await load_extensions()
